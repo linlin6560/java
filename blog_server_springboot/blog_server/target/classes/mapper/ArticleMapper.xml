@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.blog.mapper.ArticleMapper">
+    <select id="findAll" resultType="com.blog.blog.entity.Article">
+        SELECT * FROM article ORDER BY create_time DESC
+    </select>
+    
+    <select id="findById" resultType="com.blog.blog.entity.Article">
+        SELECT * FROM article WHERE id = #{id}
+    </select>
+    
+    <select id="findByUserId" resultType="com.blog.blog.entity.Article">
+        SELECT * FROM article 
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="findPublished" resultType="com.blog.blog.entity.Article">
+        SELECT * FROM article 
+        WHERE status = 1  -- 只显示已发布的文章
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="findLatest" resultType="com.blog.blog.entity.Article">
+        SELECT * FROM article 
+        WHERE status = 1 
+        ORDER BY create_time DESC 
+        LIMIT #{limit}
+    </select>
+    
+    <select id="findForUser" resultType="com.blog.blog.entity.Article">
+        SELECT * FROM article 
+        WHERE user_id = #{userId} 
+        OR (status = 1 AND user_id != #{userId})
+        ORDER BY create_time DESC
+    </select>
+    
+    <insert id="insert" parameterType="com.blog.blog.entity.Article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article (
+            title, content, author, user_id, status, create_time, update_time
+        ) VALUES (
+            #{title}, #{content}, #{author}, #{userId}, #{status}, #{createTime}, #{updateTime}
+        )
+    </insert>
+    
+    <update id="update" parameterType="com.blog.blog.entity.Article">
+        UPDATE article 
+        SET title = #{title},
+            content = #{content},
+            status = #{status},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="delete">
+        DELETE FROM article WHERE id = #{id}
+    </delete>
+    
+    <!-- 添加清空文章表的方法 -->
+    <delete id="deleteAll">
+        DELETE FROM article
+    </delete>
+    
+    <!-- 其他现有方法保持不变 -->
+</mapper>
