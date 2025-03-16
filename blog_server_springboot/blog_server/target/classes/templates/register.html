@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 博客系统</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --primary-light: #757de8;
+            --primary-dark: #002984;
+            --text-on-primary: #ffffff;
+            --secondary-color: #f5f5f5;
+            --error-color: #f44336;
+            --success-color: #4caf50;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .register-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 450px;
+            transition: all 0.3s ease;
+            margin: 40px 0;
+        }
+        
+        .register-container:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-dark);
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: rgba(244, 67, 54, 0.1);
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .success-message {
+            color: var(--success-color);
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .nav-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 40px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .brand {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .brand-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .password-strength {
+            height: 5px;
+            margin-top: 8px;
+            border-radius: 3px;
+            background-color: #eee;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background-color 0.3s;
+        }
+        
+        .password-tips {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .terms {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .terms a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .terms a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <div class="brand-name">博客系统</div>
+        </div>
+        <h2>用户注册</h2>
+        <div th:if="${error}" class="error-message" th:text="${error}"></div>
+        <div th:if="${success}" class="success-message" th:text="${success}"></div>
+        
+        <form th:action="@{/register}" method="post" th:object="${user}">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" th:field="*{username}" placeholder="请输入用户名" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="nickname">昵称</label>
+                <input type="text" id="nickname" name="nickname" th:field="*{nickname}" placeholder="请输入昵称">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">邮箱</label>
+                <input type="email" id="email" name="email" th:field="*{email}" placeholder="请输入邮箱">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" th:field="*{password}" placeholder="请输入密码" required onkeyup="checkPasswordStrength()">
+                <span class="password-toggle" onclick="togglePassword('password')">👁️</span>
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                </div>
+                <div class="password-tips" id="passwordTips">密码至少包含6个字符</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">确认密码</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="请再次输入密码" required onkeyup="checkPasswordMatch()">
+                <span class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</span>
+                <div class="password-tips" id="confirmPasswordTips"></div>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn" id="registerBtn">注 册</button>
+            </div>
+            
+            <div class="terms">
+                注册即表示您同意我们的<a href="#">服务条款</a>和<a href="#">隐私政策</a>
+            </div>
+            
+            <div class="nav-links">
+                <a th:href="@{/login}">已有账号？去登录</a>
+                <a th:href="@{/}">返回首页</a>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+        
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('passwordStrengthBar');
+            const tips = document.getElementById('passwordTips');
+            
+            // 重置
+            strengthBar.style.width = '0%';
+            strengthBar.style.backgroundColor = '#eee';
+            
+            if (password.length === 0) {
+                tips.textContent = '密码至少包含6个字符';
+                return;
+            }
+            
+            // 计算密码强度
+            let strength = 0;
+            
+            // 长度检查
+            if (password.length >= 6) strength += 20;
+            if (password.length >= 8) strength += 10;
+            
+            // 复杂性检查
+            if (/[a-z]/.test(password)) strength += 10;
+            if (/[A-Z]/.test(password)) strength += 10;
+            if (/[0-9]/.test(password)) strength += 10;
+            if (/[^a-zA-Z0-9]/.test(password)) strength += 15;
+            
+            // 更新强度条
+            strengthBar.style.width = strength + '%';
+            
+            // 设置颜色和提示
+            if (strength < 30) {
+                strengthBar.style.backgroundColor = '#f44336';
+                tips.textContent = '密码强度：弱';
+            } else if (strength < 60) {
+                strengthBar.style.backgroundColor = '#ff9800';
+                tips.textContent = '密码强度：中';
+            } else {
+                strengthBar.style.backgroundColor = '#4caf50';
+                tips.textContent = '密码强度：强';
+            }
+        }
+        
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const tips = document.getElementById('confirmPasswordTips');
+            const registerBtn = document.getElementById('registerBtn');
+            
+            if (confirmPassword.length === 0) {
+                tips.textContent = '';
+                return;
+            }
+            
+            if (password === confirmPassword) {
+                tips.textContent = '密码匹配';
+                tips.style.color = 'var(--success-color)';
+                registerBtn.disabled = false;
+            } else {
+                tips.textContent = '密码不匹配';
+                tips.style.color = 'var(--error-color)';
+                registerBtn.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
