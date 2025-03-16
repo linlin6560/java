@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客系统 - 首页</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --primary-light: #757de8;
+            --primary-dark: #002984;
+            --text-on-primary: #ffffff;
+            --secondary-color: #f5f5f5;
+            --error-color: #f44336;
+            --success-color: #4caf50;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            background-color: var(--primary-color);
+            color: var(--text-on-primary);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            color: var(--text-on-primary);
+        }
+        
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        .nav-item a {
+            color: var(--text-on-primary);
+            text-decoration: none;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        
+        .nav-item.active a {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+        }
+        
+        /* 首页横幅 */
+        .hero {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .hero-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .btn-hero {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+        
+        .btn-white {
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+        }
+        
+        /* 文章列表样式 */
+        .section-title {
+            font-size: 24px;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: var(--gray-300);
+            margin-left: 10px;
+        }
+        
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .article-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .article-card-content {
+            padding: 20px;
+        }
+        
+        .article-card-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .article-card-title a {
+            color: var(--gray-800);
+            text-decoration: none;
+        }
+        
+        .article-card-meta {
+            font-size: 14px;
+            color: var(--gray-600);
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .article-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .article-card-excerpt {
+            color: var(--gray-700);
+            font-size: 14px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        
+        .article-card-link {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .empty-message {
+            padding: 30px;
+            text-align: center;
+            color: var(--gray-600);
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* 页脚样式 */
+        .footer {
+            background-color: var(--gray-800);
+            color: var(--gray-300);
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .footer-title {
+            font-size: 18px;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-700);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="navbar-brand">博客系统</a>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item active"><a href="/">首页</a></li>
+                <li class="nav-item"><a href="/articles">文章</a></li>
+                <li class="nav-item"><a href="/categories">分类</a></li>
+                <li class="nav-item"><a href="/about">关于</a></li>
+            </ul>
+            
+            <div class="user-actions">
+                <div sec:authorize="isAuthenticated()">
+                    <a href="/dashboard" class="btn btn-outline">个人中心</a>
+                    <a href="/logout" class="btn btn-primary">退出登录</a>
+                </div>
+                <div sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="btn btn-outline">登录</a>
+                    <a href="/register" class="btn btn-primary">注册</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 首页横幅 -->
+    <div class="hero">
+        <div class="container">
+            <h1 class="hero-title">欢迎来到博客系统</h1>
+            <p class="hero-subtitle">分享知识，连接世界</p>
+            <div class="hero-buttons">
+                <a href="/articles" class="btn btn-hero btn-white">浏览文章</a>
+                <a href="/articles/create" class="btn btn-hero btn-outline" sec:authorize="isAuthenticated()">写文章</a>
+                <a href="/register" class="btn btn-hero btn-outline" sec:authorize="!isAuthenticated()">立即注册</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 删除重复的欢迎部分，只保留hero部分 -->
+    <div class="container">
+        <!-- 最新文章部分 -->
+        <div class="latest-articles">
+            <h2 class="section-title">最新文章</h2>
+            <div class="article-grid">
+                <!-- 有文章时显示 -->
+                <div th:if="${not #lists.isEmpty(articles)}" th:each="article : ${articles}" class="article-card">
+                    <div class="article-card-content">
+                        <h3 class="article-card-title">
+                            <a th:href="@{'/articles/' + ${article.id}}" th:text="${article.title}">文章标题</a>
+                        </h3>
+                        <div class="article-card-meta">
+                            <span>
+                                <i class="fas fa-user"></i>
+                                <span th:text="${article.author}">作者</span>
+                            </span>
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                <span th:text="${#dates.format(new java.util.Date(article.createTime), 'yyyy-MM-dd')}">发布日期</span>
+                            </span>
+                        </div>
+                        <p class="article-card-excerpt" th:text="${#strings.abbreviate(article.content, 150)}">文章摘要...</p>
+                        <a th:href="@{'/articles/' + ${article.id}}" class="article-card-link">阅读更多 →</a>
+                    </div>
+                </div>
+            
+                <!-- 没有文章时显示 -->
+                <div th:if="${#lists.isEmpty(articles)}" class="empty-message">
+                    <p>暂无文章，敬请期待！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- 页脚 -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">关于我们</h3>
+                <p>博客系统是一个简洁、易用的博客平台，致力于为用户提供优质的内容分享体验。</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3 class="footer-title">快速链接</h3>
+                <ul class="footer-links">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/articles">文章</a></li>
+                    <li><a href="/categories">分类</a></li>
+                    <li><a href="/about">关于</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3 class="footer-title">联系我们</h3>
+                <ul class="footer-links">
+                    <li><a href="mailto:contact@example.com">邮箱：contact@example.com</a></li>
+                    <li><a href="#">微信：BlogSystem</a></li>
+                    <li><a href="#">QQ群：123456789</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 博客系统 - 保留所有权利</p>
+        </div>
+    </div>
+</footer>
+
+<!-- 将原有的样式覆盖，完全去除所有滑动效果 -->
+<style>
+    /* 覆盖导航栏项目的过渡效果 */
+    .nav-item a {
+        transition: none;
+    }
+    
+    /* 覆盖按钮的过渡效果 */
+    .btn {
+        transition: none;
+    }
+    
+    .btn-primary:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .btn-outline:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: none;
+    }
+    
+    /* 覆盖欢迎区域的过渡效果 */
+    .welcome-section {
+        transition: none;
+    }
+    
+    .welcome-section:hover {
+        transform: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* 覆盖文章项的过渡效果 */
+    .article-item {
+        transition: none;
+    }
+    
+    .article-item:hover {
+        transform: none;
+    }
+    
+    /* 覆盖文章标题链接的过渡效果 */
+    .article-title a {
+        transition: none;
+    }
+    
+    /* 覆盖"查看更多"链接的过渡效果 */
+    .read-more a {
+        transition: none;
+    }
+    
+    /* 覆盖页脚链接的过渡效果 */
+    .footer-links a {
+        transition: none;
+    }
+</style>
+
+<script>
+    // 移除所有可能的动画效果
+    document.addEventListener('DOMContentLoaded', function() {
+        // 禁用所有CSS动画和过渡
+        const style = document.createElement('style');
+        style.innerHTML = `
+            * {
+                transition: none !important;
+                animation: none !important;
+                transform: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+<style>
+    /* 在已有的样式后面添加 */
+    .latest-articles {
+        margin: 40px 0;
+    }
+    
+    .article-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .article-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .article-card-title {
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .article-card-title a {
+        color: var(--gray-900);
+        text-decoration: none;
+    }
+    
+    .article-card-title a:hover {
+        color: var(--primary-color);
+    }
+    
+    .article-card-meta {
+        font-size: 0.9rem;
+        color: var(--gray-600);
+        margin-bottom: 12px;
+        display: flex;
+        gap: 15px;
+    }
+    
+    .article-card-excerpt {
+        color: var(--gray-700);
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+    
+    .article-card-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .article-card-link:hover {
+        text-decoration: underline;
+    }
+    
+    .empty-message {
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 8px;
+        color: var(--gray-600);
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        color: var(--gray-900);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary-color);
+    }
+</style>
+</body>
+</html>
